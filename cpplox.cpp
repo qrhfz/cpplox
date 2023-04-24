@@ -4,7 +4,7 @@
 #include "debug.h"
 
 int main(int argc, char **argv) {
-  chunk::Chunk chunk;
+  chunk::Chunk chunk{};
 
   auto constantIdx = chunk.addConstant(1.2);
   chunk.write(chunk::OP_CONSTANT, 123);
