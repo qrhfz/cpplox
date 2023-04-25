@@ -6,8 +6,8 @@
 #include "chunk.h"
 
 namespace debug {
-void disassembleChunk(chunk::Chunk& chunk, std::string name);
+void disassembleChunk(chunk::Chunk &chunk, std::string name);
 
-}  // namespace debug
-
+int disassembleInstruction(chunk::Chunk &chunk, int offset);
+} // namespace debug
 #endif

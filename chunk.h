@@ -15,7 +15,7 @@ enum OpCode {
 // using Chunk = std::vector<uint8_t>;
 
 class Chunk {
- public:
+public:
   Chunk();
   ~Chunk();
 
@@ -30,6 +30,6 @@ class Chunk {
   uint64_t addConstant(value::Value);
 };
 
-}  // namespace chunk
+} // namespace chunk
 
 #endif
