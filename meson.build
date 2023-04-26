@@ -3,7 +3,10 @@ project('cpplox', 'cpp',
   default_options : ['warning_level=3',
                      'cpp_std=c++14'])
 
-exe = executable('cpplox', 'cpplox.cpp', 'chunk.cpp','debug.cpp','value.cpp',
-  install : true)
+exe = executable(
+  'cpplox', 'cpplox.cpp', 'chunk.cpp',
+  'debug.cpp','value.cpp', 'vm.cpp',
+  install : true
+)
 
 test('basic', exe)

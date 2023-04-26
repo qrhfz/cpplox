@@ -5,6 +5,7 @@
 
 #include "chunk.h"
 #include "value.h"
+#include <deque>
 #include <stack>
 
 namespace vm {
@@ -19,7 +20,7 @@ class VM {
 private:
   std::weak_ptr<chunk::Chunk> chunk;
   uint8_t *ip;
-  std::stack<value::Value> stack;
+  std::deque<value::Value> stack;
 
   InterpretResult run();
   inline uint8_t readByte();
@@ -29,6 +30,8 @@ private:
 public:
   InterpretResult interpret(std::weak_ptr<chunk::Chunk> chunk);
   void init();
+  void push(value::Value);
+  value::Value pop();
 };
 
 } // namespace vm

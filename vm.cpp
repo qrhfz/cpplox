@@ -2,9 +2,14 @@
 #include "chunk.h"
 #include "debug.h"
 #include "value.h"
+#include <cstddef>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <deque>
 #include <iostream>
 #include <stack>
+#include <valarray>
 
 namespace vm {
 InterpretResult VM::interpret(std::weak_ptr<chunk::Chunk> chunk) {
@@ -20,8 +25,17 @@ InterpretResult VM::interpret(std::weak_ptr<chunk::Chunk> chunk) {
 InterpretResult VM::run() {
   for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
+    std::printf("          ");
+    for (auto slot : this->stack) {
+      std::printf("[ ");
+      value::print(slot);
+      std::printf(" ]");
+    }
+    std::printf("\n");
+
     if (!this->chunk.expired()) {
-      auto offset = this->ip - this->chunk.lock()->codes.data();
+
+      size_t offset = this->ip - this->chunk.lock()->codes.data();
 
       debug::disassembleInstruction(*this->chunk.lock(), offset);
     }
@@ -31,11 +45,17 @@ InterpretResult VM::run() {
 
     case chunk::OP_CONSTANT: {
       value::Value constant = readConstant();
-      value::print(constant);
-      std::cout << "\n";
+      // value::print(constant);
+      // std::cout << "\n";
+      this->push(constant);
       break;
     }
+    case chunk::OP_NEGATE:
+      this->push(-this->pop());
+      break;
     case chunk::OP_RETURN:
+      value::print(this->pop());
+      std::cout << "\n";
       return INTERPRET_OK;
     }
   }
@@ -46,7 +66,15 @@ inline value::Value VM::readConstant() {
   return this->chunk.lock()->constants.at(readByte());
 }
 
+void VM::push(value::Value value) { this->stack.push_back(value); }
+
+value::Value VM::pop() {
+  value::Value top{this->stack.back()};
+  this->stack.pop_back();
+  return top;
+}
+
 void VM::init() { resetStack(); }
-void VM::resetStack() { this->stack = std::stack<value::Value>(); }
+void VM::resetStack() { this->stack.clear(); }
 
 } // namespace vm

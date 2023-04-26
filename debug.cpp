@@ -1,14 +1,16 @@
 #include "debug.h"
 
+#include <cstddef>
 #include <iomanip>
 #include <iostream>
 
+#include "chunk.h"
 #include "value.h"
 
 namespace debug {
 
 namespace {
-void simpleInstruction(std::string name, size_t &offset) {
+void simpleInstruction(std::string name, std::size_t &offset) {
   std::cout << name << "\n";
   offset += 1;
 }
@@ -47,10 +49,10 @@ void disassembleInstruction(chunk::Chunk &chunk, size_t &offset) {
   case chunk::OP_CONSTANT:
     constantInstruction("OP_CONSTANT", chunk, offset);
     break;
+  case chunk::OP_NEGATE:
+    return simpleInstruction("OP_NEGATE", offset);
   case chunk::OP_RETURN:
-    simpleInstruction("OP_RETURN", offset);
-    break;
-
+    return simpleInstruction("OP_RETURN", offset);
   default:
     std::cout << "Unknown opcode " << instruction << "\n";
     offset += 1;
