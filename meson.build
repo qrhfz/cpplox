@@ -4,7 +4,7 @@ project('cpplox', 'cpp',
                      'cpp_std=c++14'])
 
 exe = executable(
-  'cpplox', 'cpplox.cpp', 'chunk.cpp',
+  'cpplox', 'main.cpp', 'chunk.cpp',
   'debug.cpp','value.cpp', 'vm.cpp',
   install : true
 )
