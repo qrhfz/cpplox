@@ -64,7 +64,7 @@ InterpretResult VM::run() {
       this->binaryOp<std::divides<value::Value>>();
       break;
     case chunk::OP_NEGATE:
-      this->push(-this->pop());
+      this->stack.back() = -this->stack.back();
       break;
     case chunk::OP_RETURN:
       value::print(this->pop());
