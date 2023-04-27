@@ -49,6 +49,14 @@ void disassembleInstruction(chunk::Chunk &chunk, size_t &offset) {
   case chunk::OP_CONSTANT:
     constantInstruction("OP_CONSTANT", chunk, offset);
     break;
+  case chunk::OP_ADD:
+    return simpleInstruction("OP_ADD", offset);
+  case chunk::OP_SUBTRACT:
+    return simpleInstruction("OP_SUBTRACT", offset);
+  case chunk::OP_MULTIPLY:
+    return simpleInstruction("OP_MULTIPLY", offset);
+  case chunk::OP_DIVIDE:
+    return simpleInstruction("OP_DIVIDE", offset);
   case chunk::OP_NEGATE:
     return simpleInstruction("OP_NEGATE", offset);
   case chunk::OP_RETURN:

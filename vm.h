@@ -27,6 +27,12 @@ private:
   inline value::Value readConstant();
   void resetStack();
 
+  template <typename Op> void binaryOp() {
+    auto b = this->pop();
+    auto a = this->pop();
+    this->push(Op()(a, b));
+  }
+
 public:
   InterpretResult interpret(std::weak_ptr<chunk::Chunk> chunk);
   void init();

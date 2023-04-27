@@ -11,6 +11,18 @@ int main(int argc, char **argv) {
   auto constantIdx = chunk->addConstant(1.2);
   chunk->write(chunk::OP_CONSTANT, 123);
   chunk->write(constantIdx, 123);
+
+  constantIdx = chunk->addConstant(3.4);
+  chunk->write(chunk::OP_CONSTANT, 123);
+  chunk->write(constantIdx, 123);
+
+  chunk->write(chunk::OP_ADD, 123);
+
+  constantIdx = chunk->addConstant(5.6);
+  chunk->write(chunk::OP_CONSTANT, 123);
+  chunk->write(constantIdx, 123);
+
+  chunk->write(chunk::OP_DIVIDE, 123);
   chunk->write(chunk::OP_NEGATE, 123);
 
   chunk->write(chunk::OP_RETURN, 123);

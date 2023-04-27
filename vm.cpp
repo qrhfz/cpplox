@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <deque>
+#include <functional>
 #include <iostream>
 #include <stack>
 #include <valarray>
@@ -50,6 +51,18 @@ InterpretResult VM::run() {
       this->push(constant);
       break;
     }
+    case chunk::OP_ADD:
+      this->binaryOp<std::plus<value::Value>>();
+      break;
+    case chunk::OP_SUBTRACT:
+      this->binaryOp<std::minus<value::Value>>();
+      break;
+    case chunk::OP_MULTIPLY:
+      this->binaryOp<std::multiplies<value::Value>>();
+      break;
+    case chunk::OP_DIVIDE:
+      this->binaryOp<std::divides<value::Value>>();
+      break;
     case chunk::OP_NEGATE:
       this->push(-this->pop());
       break;
