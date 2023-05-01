@@ -7,6 +7,7 @@
 #include "value.h"
 #include <deque>
 #include <stack>
+#include <string>
 
 namespace vm {
 
@@ -34,7 +35,7 @@ private:
   }
 
 public:
-  InterpretResult interpret(std::weak_ptr<chunk::Chunk> chunk);
+  InterpretResult interpret(const std::string &src);
   void init();
   void push(value::Value);
   value::Value pop();

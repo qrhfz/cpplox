@@ -1,5 +1,6 @@
 #include "vm.h"
 #include "chunk.h"
+#include "compiler.h"
 #include "debug.h"
 #include "value.h"
 #include <cstddef>
@@ -13,14 +14,10 @@
 #include <valarray>
 
 namespace vm {
-InterpretResult VM::interpret(std::weak_ptr<chunk::Chunk> chunk) {
-  this->chunk = chunk;
+InterpretResult VM::interpret(const std::string &src) {
+  compiler::compile(src);
 
-  if (!this->chunk.expired()) {
-    this->ip = this->chunk.lock()->codes.data();
-  }
-
-  return run();
+  return INTERPRET_OK;
 }
 
 InterpretResult VM::run() {

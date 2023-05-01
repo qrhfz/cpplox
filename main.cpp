@@ -1,36 +1,60 @@
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <sstream>
+#include <string>
 
 #include "chunk.h"
 #include "debug.h"
 #include "vm.h"
+#include <fstream>
+
+static void repl(vm::VM &);
+static void runFile(vm::VM &, char *const);
 
 int main(int argc, char **argv) {
-  std::shared_ptr<chunk::Chunk> chunk{new chunk::Chunk};
-
-  auto constantIdx = chunk->addConstant(1.2);
-  chunk->write(chunk::OP_CONSTANT, 123);
-  chunk->write(constantIdx, 123);
-
-  constantIdx = chunk->addConstant(3.4);
-  chunk->write(chunk::OP_CONSTANT, 123);
-  chunk->write(constantIdx, 123);
-
-  chunk->write(chunk::OP_ADD, 123);
-
-  constantIdx = chunk->addConstant(5.6);
-  chunk->write(chunk::OP_CONSTANT, 123);
-  chunk->write(constantIdx, 123);
-
-  chunk->write(chunk::OP_DIVIDE, 123);
-  chunk->write(chunk::OP_NEGATE, 123);
-
-  chunk->write(chunk::OP_RETURN, 123);
-
-  // debug::disassembleChunk(*chunk, "test chunk");
-
   vm::VM vm{};
-  vm.init();
-  vm.interpret(chunk);
+
+  if (argc == 1) {
+    repl(vm);
+  } else if (argc == 2) {
+    runFile(vm, argv[1]);
+  } else {
+    fprintf(stderr, "Usage: clox [path]\n");
+    exit(64);
+  }
+
   return 0;
+}
+
+static void repl(vm::VM &vm) {
+  std::string line;
+
+  for (;;) {
+    std::cout << "> ";
+    std::getline(std::cin, line);
+
+    if (line.empty()) {
+      std::cout << "\n";
+      break;
+    }
+
+    vm.interpret(line);
+  }
+}
+
+static void runFile(vm::VM &vm, char *const path) {
+  std::stringstream buffer;
+  std::ifstream srcFile{path}; // open the file for reading
+  if (!srcFile.is_open()) {
+    std::cerr << "Unable to open file\n";
+    exit(74);
+  }
+
+  buffer << srcFile.rdbuf();
+  std::string src = buffer.str();
+  srcFile.close(); // close the file
+
+  vm.interpret(src);
 }
