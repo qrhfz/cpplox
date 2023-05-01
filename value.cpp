@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-namespace value {
-void initValueArray(ValueArray& arr) { arr.clear(); }
-void print(Value value) { std::printf("%g", value); }
+namespace lox {
+void initValueArray(ValueArray &arr) { arr.clear(); }
+void printValue(Value value) { std::printf("%g", value); }
 
-}  // namespace value
+} // namespace lox

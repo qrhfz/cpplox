@@ -3,12 +3,12 @@
 
 #include <vector>
 
-namespace value {
+namespace lox {
 using Value = double;
 using ValueArray = std::vector<Value>;
 
-void initValueArray(ValueArray&);
-void print(Value);
-}  // namespace value
+void initValueArray(ValueArray &);
+void printValue(Value);
+} // namespace lox
 
 #endif

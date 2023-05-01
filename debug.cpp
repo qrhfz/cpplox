@@ -7,7 +7,7 @@
 #include "chunk.h"
 #include "value.h"
 
-namespace debug {
+namespace lox {
 
 namespace {
 void simpleInstruction(std::string name, std::size_t &offset) {
@@ -15,18 +15,17 @@ void simpleInstruction(std::string name, std::size_t &offset) {
   offset += 1;
 }
 
-void constantInstruction(std::string name, chunk::Chunk &chunk,
-                         size_t &offset) {
+void constantInstruction(std::string name, Chunk &chunk, size_t &offset) {
   auto constantIdx = chunk.codes[offset + 1];
   std::printf("%-16s %4d '", name.c_str(), constantIdx);
-  value::print(chunk.constants[constantIdx]);
+  printValue(chunk.constants[constantIdx]);
   std::printf("'\n");
   offset += 2;
 }
 
 } // namespace
 
-void disassembleChunk(chunk::Chunk &chunk, std::string name) {
+void disassembleChunk(Chunk &chunk, std::string name) {
   std::cout << name << "\n";
 
   for (size_t offset = 0; offset < chunk.codes.size();) {
@@ -34,7 +33,7 @@ void disassembleChunk(chunk::Chunk &chunk, std::string name) {
   }
 }
 
-void disassembleInstruction(chunk::Chunk &chunk, size_t &offset) {
+void disassembleInstruction(Chunk &chunk, size_t &offset) {
   std::cout << std::setw(4) << std::setfill('0') << offset << ' ';
 
   if (offset > 0 && chunk.getLine(offset) == chunk.getLine(offset - 1)) {
@@ -46,20 +45,20 @@ void disassembleInstruction(chunk::Chunk &chunk, size_t &offset) {
   auto instruction = chunk.codes[offset];
 
   switch (instruction) {
-  case chunk::OP_CONSTANT:
+  case OP_CONSTANT:
     constantInstruction("OP_CONSTANT", chunk, offset);
     break;
-  case chunk::OP_ADD:
+  case OP_ADD:
     return simpleInstruction("OP_ADD", offset);
-  case chunk::OP_SUBTRACT:
+  case OP_SUBTRACT:
     return simpleInstruction("OP_SUBTRACT", offset);
-  case chunk::OP_MULTIPLY:
+  case OP_MULTIPLY:
     return simpleInstruction("OP_MULTIPLY", offset);
-  case chunk::OP_DIVIDE:
+  case OP_DIVIDE:
     return simpleInstruction("OP_DIVIDE", offset);
-  case chunk::OP_NEGATE:
+  case OP_NEGATE:
     return simpleInstruction("OP_NEGATE", offset);
-  case chunk::OP_RETURN:
+  case OP_RETURN:
     return simpleInstruction("OP_RETURN", offset);
   default:
     std::cout << "Unknown opcode " << instruction << "\n";
@@ -68,4 +67,4 @@ void disassembleInstruction(chunk::Chunk &chunk, size_t &offset) {
   }
 }
 
-} // namespace debug
+} // namespace lox

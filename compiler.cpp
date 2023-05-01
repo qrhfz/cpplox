@@ -2,6 +2,6 @@
 #include "scanner.h"
 #include <string>
 
-namespace compiler {
+namespace lox {
 void compile(std::string const &src) { Scanner scanner{src}; }
-} // namespace compiler
+} // namespace lox

@@ -9,7 +9,7 @@
 #include <stack>
 #include <string>
 
-namespace vm {
+namespace lox {
 
 enum InterpretResult {
   INTERPRET_OK,
@@ -19,13 +19,13 @@ enum InterpretResult {
 
 class VM {
 private:
-  std::weak_ptr<chunk::Chunk> chunk;
+  std::weak_ptr<Chunk> chunk;
   uint8_t *ip;
-  std::deque<value::Value> stack;
+  std::deque<Value> stack;
 
   InterpretResult run();
   inline uint8_t readByte();
-  inline value::Value readConstant();
+  inline Value readConstant();
   void resetStack();
 
   template <typename Op> void binaryOp() {
@@ -37,10 +37,10 @@ private:
 public:
   InterpretResult interpret(const std::string &src);
   void init();
-  void push(value::Value);
-  value::Value pop();
+  void push(Value);
+  Value pop();
 };
 
-} // namespace vm
+} // namespace lox
 
 #endif

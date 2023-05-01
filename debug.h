@@ -6,9 +6,9 @@
 
 #include "chunk.h"
 
-namespace debug {
-void disassembleChunk(chunk::Chunk &chunk, std::string name);
+namespace lox {
+void disassembleChunk(Chunk &chunk, std::string name);
 
-void disassembleInstruction(chunk::Chunk &chunk, std::size_t &offset);
-} // namespace debug
+void disassembleInstruction(Chunk &chunk, std::size_t &offset);
+} // namespace lox
 #endif

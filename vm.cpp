@@ -13,9 +13,9 @@
 #include <stack>
 #include <valarray>
 
-namespace vm {
+namespace lox {
 InterpretResult VM::interpret(const std::string &src) {
-  compiler::compile(src);
+  compile(src);
 
   return INTERPRET_OK;
 }
@@ -26,7 +26,7 @@ InterpretResult VM::run() {
     std::printf("          ");
     for (auto slot : this->stack) {
       std::printf("[ ");
-      value::print(slot);
+      printValue(slot);
       std::printf(" ]");
     }
     std::printf("\n");
@@ -35,36 +35,34 @@ InterpretResult VM::run() {
 
       size_t offset = this->ip - this->chunk.lock()->codes.data();
 
-      debug::disassembleInstruction(*this->chunk.lock(), offset);
+      disassembleInstruction(*this->chunk.lock(), offset);
     }
 #endif
     uint8_t instruction;
     switch (instruction = *this->ip++) {
 
-    case chunk::OP_CONSTANT: {
-      value::Value constant = readConstant();
-      // value::print(constant);
-      // std::cout << "\n";
+    case OP_CONSTANT: {
+      Value constant = readConstant();
       this->push(constant);
       break;
     }
-    case chunk::OP_ADD:
-      this->binaryOp<std::plus<value::Value>>();
+    case OP_ADD:
+      this->binaryOp<std::plus<Value>>();
       break;
-    case chunk::OP_SUBTRACT:
-      this->binaryOp<std::minus<value::Value>>();
+    case OP_SUBTRACT:
+      this->binaryOp<std::minus<Value>>();
       break;
-    case chunk::OP_MULTIPLY:
-      this->binaryOp<std::multiplies<value::Value>>();
+    case OP_MULTIPLY:
+      this->binaryOp<std::multiplies<Value>>();
       break;
-    case chunk::OP_DIVIDE:
-      this->binaryOp<std::divides<value::Value>>();
+    case OP_DIVIDE:
+      this->binaryOp<std::divides<Value>>();
       break;
-    case chunk::OP_NEGATE:
+    case OP_NEGATE:
       this->stack.back() = -this->stack.back();
       break;
-    case chunk::OP_RETURN:
-      value::print(this->pop());
+    case OP_RETURN:
+      printValue(this->pop());
       std::cout << "\n";
       return INTERPRET_OK;
     }
@@ -72,14 +70,14 @@ InterpretResult VM::run() {
 }
 
 inline uint8_t VM::readByte() { return *this->ip++; }
-inline value::Value VM::readConstant() {
+inline Value VM::readConstant() {
   return this->chunk.lock()->constants.at(readByte());
 }
 
-void VM::push(value::Value value) { this->stack.push_back(value); }
+void VM::push(Value value) { this->stack.push_back(value); }
 
-value::Value VM::pop() {
-  value::Value top{this->stack.back()};
+Value VM::pop() {
+  Value top{this->stack.back()};
   this->stack.pop_back();
   return top;
 }
@@ -87,4 +85,4 @@ value::Value VM::pop() {
 void VM::init() { resetStack(); }
 void VM::resetStack() { this->stack.clear(); }
 
-} // namespace vm
+} // namespace lox

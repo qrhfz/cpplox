@@ -6,7 +6,7 @@
 #include "common.h"
 #include "value.h"
 
-namespace chunk {
+namespace lox {
 enum OpCode {
   OP_CONSTANT,
   OP_ADD,
@@ -26,15 +26,15 @@ public:
 
   std::vector<uint8_t> codes;
   std::vector<size_t> lines;
-  value::ValueArray constants;
+  ValueArray constants;
 
   void write(uint8_t byte, size_t line);
   void init();
   size_t getLine(size_t instructionIdx);
 
-  uint64_t addConstant(value::Value);
+  uint64_t addConstant(Value);
 };
 
-} // namespace chunk
+} // namespace lox
 
 #endif

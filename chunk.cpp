@@ -1,6 +1,6 @@
 #include "chunk.h"
 
-namespace chunk {
+namespace lox {
 
 Chunk::Chunk() {}
 
@@ -36,10 +36,10 @@ size_t Chunk::getLine(size_t instructionIdx) {
   return 0;
 }
 
-uint64_t Chunk::addConstant(value::Value value) {
+uint64_t Chunk::addConstant(Value value) {
   this->constants.push_back(value);
 
   return this->constants.size() - 1;
 }
 
-}  // namespace chunk
+} // namespace lox
