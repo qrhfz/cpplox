@@ -10,11 +10,11 @@
 #include "vm.h"
 #include <fstream>
 
-static void repl(vm::VM &);
-static void runFile(vm::VM &, char *const);
+static void repl(lox::VM &);
+static void runFile(lox::VM &, char *const);
 
 int main(int argc, char **argv) {
-  vm::VM vm{};
+  lox::VM vm{};
 
   if (argc == 1) {
     repl(vm);
@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-static void repl(vm::VM &vm) {
+static void repl(lox::VM &vm) {
   std::string line;
 
   for (;;) {
@@ -44,7 +44,7 @@ static void repl(vm::VM &vm) {
   }
 }
 
-static void runFile(vm::VM &vm, char *const path) {
+static void runFile(lox::VM &vm, char *const path) {
   std::stringstream buffer;
   std::ifstream srcFile{path}; // open the file for reading
   if (!srcFile.is_open()) {
