@@ -5,9 +5,10 @@
 namespace lox {
 class Scanner {
 public:
-  Scanner(std::string const &src);
+  Scanner(std::string const &_src);
 
 private:
+  std::string const &src;
   int start;
   int current;
   int line;

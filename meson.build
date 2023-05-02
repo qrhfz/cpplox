@@ -6,6 +6,7 @@ project('cpplox', 'cpp',
 exe = executable(
   'cpplox', 'main.cpp', 'chunk.cpp',
   'debug.cpp','value.cpp', 'vm.cpp',
+  'scanner.cpp','compiler.cpp',
   install : true
 )
 
