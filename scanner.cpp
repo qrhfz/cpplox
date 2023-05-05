@@ -94,7 +94,67 @@ Token Scanner::number() {
   return makeToken(TOKEN_NUMBER);
 }
 
-TokenType Scanner::identifierType() { return TOKEN_IDENTIFIER; }
+TokenType Scanner::identifierType() {
+  switch (src[start]) {
+  case 'a':
+    return checkKeyword(1, "nd", TOKEN_AND);
+  case 'c':
+    return checkKeyword(1, "lass", TOKEN_CLASS);
+  case 'e':
+    return checkKeyword(1, "lse", TOKEN_ELSE);
+  case 'i':
+    return checkKeyword(1, "f", TOKEN_IF);
+  case 'n':
+    return checkKeyword(1, "il", TOKEN_NIL);
+  case 'o':
+    return checkKeyword(1, "r", TOKEN_OR);
+  case 'p':
+    return checkKeyword(1, "rint", TOKEN_PRINT);
+  case 'r':
+    return checkKeyword(1, "eturn", TOKEN_RETURN);
+  case 's':
+    return checkKeyword(1, "uper", TOKEN_SUPER);
+  case 'v':
+    return checkKeyword(1, "ar", TOKEN_VAR);
+  case 'w':
+    return checkKeyword(1, "hile", TOKEN_WHILE);
+  case 'f':
+    if (current - start > 1) {
+      switch (src[start + 1]) {
+      case 'a':
+        return checkKeyword(2, "lse", TOKEN_FALSE);
+      case 'o':
+        return checkKeyword(2, "r", TOKEN_FOR);
+      case 'u':
+        return checkKeyword(2, "n", TOKEN_FUN);
+      }
+    }
+    break;
+  case 't':
+    if (current - start > 1) {
+      switch (src[start + 1]) {
+      case 'h':
+        return checkKeyword(2, "is", TOKEN_THIS);
+      case 'r':
+        return checkKeyword(2, "ue", TOKEN_TRUE);
+      }
+    }
+    break;
+  }
+
+  return TOKEN_IDENTIFIER;
+}
+
+TokenType Scanner::checkKeyword(int offset, std::string const &rest,
+                                TokenType type) {
+  int identifierLength = offset + rest.length();
+  bool strEqual = rest.compare(src.substr(offset, rest.length())) == 0;
+  if (current - start == identifierLength && strEqual) {
+    return type;
+  }
+
+  return TOKEN_IDENTIFIER;
+}
 
 bool Scanner::isDigit(char c) { return c >= '0' && c <= '9'; }
 bool Scanner::isAlpha(char c) {

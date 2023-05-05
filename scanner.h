@@ -79,6 +79,7 @@ private:
   Token makeToken(TokenType type);
   TokenType identifierType();
 
+  TokenType checkKeyword(int offset, std::string const &rest, TokenType type);
   bool isDigit(char);
   bool isAlpha(char);
   bool isAtEnd() { return this->current == int(this->src.length()); }
