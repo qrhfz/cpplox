@@ -19,7 +19,7 @@ enum InterpretResult {
 
 class VM {
 private:
-  std::weak_ptr<Chunk> chunk;
+  Chunk chunk;
   uint8_t *ip;
   std::deque<Value> stack;
 
@@ -35,7 +35,7 @@ private:
   }
 
 public:
-  InterpretResult interpret(const std::string &src);
+  InterpretResult interpret(std::string const &src);
   void init();
   void push(Value);
   Value pop();

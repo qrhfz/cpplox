@@ -3,6 +3,7 @@
 #include "compiler.h"
 #include "debug.h"
 #include "value.h"
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -10,14 +11,23 @@
 #include <deque>
 #include <functional>
 #include <iostream>
+#include <memory>
 #include <stack>
 #include <valarray>
 
 namespace lox {
-InterpretResult VM::interpret(const std::string &src) {
-  compile(src);
+InterpretResult VM::interpret(std::string const &src) {
+  Parser parser{};
+  Chunk chunk{};
 
-  return INTERPRET_OK;
+  if (!parser.compile(src, chunk)) {
+    return INTERPRET_COMPILE_ERROR;
+  }
+
+  this->chunk = std::move(chunk);
+  ip = this->chunk.codes.data();
+
+  return run();
 }
 
 InterpretResult VM::run() {
@@ -31,12 +41,10 @@ InterpretResult VM::run() {
     }
     std::printf("\n");
 
-    if (!this->chunk.expired()) {
+    size_t offset = this->ip - this->chunk.codes.data();
 
-      size_t offset = this->ip - this->chunk.lock()->codes.data();
+    disassembleInstruction(this->chunk, offset);
 
-      disassembleInstruction(*this->chunk.lock(), offset);
-    }
 #endif
     uint8_t instruction;
     switch (instruction = *this->ip++) {
@@ -70,9 +78,7 @@ InterpretResult VM::run() {
 }
 
 inline uint8_t VM::readByte() { return *this->ip++; }
-inline Value VM::readConstant() {
-  return this->chunk.lock()->constants.at(readByte());
-}
+inline Value VM::readConstant() { return this->chunk.constants.at(readByte()); }
 
 void VM::push(Value value) { this->stack.push_back(value); }
 

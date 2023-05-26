@@ -163,13 +163,12 @@ bool Scanner::isAlpha(char c) {
 
 Token Scanner::makeToken(TokenType type) {
   Token t = {type, this->line,
-             string_view{this->src.data(),
-                         static_cast<size_t>(this->current - this->start)}};
+             this->src.substr(this->start, this->current - this->start)};
   return t;
 }
 
 Token Scanner::errorToken(std::string s) {
-  Token t = {TOKEN_ERROR, this->line, string_view{s}};
+  Token t = {TOKEN_ERROR, this->line, s};
   return t;
 }
 

@@ -59,7 +59,7 @@ typedef enum {
 typedef struct {
   TokenType type;
   int line;
-  string_view str;
+  std::string str;
 } Token;
 
 class Scanner {
