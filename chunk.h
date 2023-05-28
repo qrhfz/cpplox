@@ -21,9 +21,6 @@ enum OpCode {
 
 class Chunk {
 public:
-  Chunk();
-  ~Chunk();
-
   std::vector<uint8_t> codes;
   std::vector<size_t> lines;
   ValueArray constants;

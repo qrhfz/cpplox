@@ -1,7 +1,11 @@
 #include "scanner.h"
 
 namespace lox {
-Scanner::Scanner(std::string const &_src) : src{_src} {}
+Scanner::Scanner(std::string const &_src) : src{_src} {
+  start = 0;
+  current = 0;
+  line = 1;
+}
 
 Token Scanner::scanToken() {
   skipWhiteSpace();

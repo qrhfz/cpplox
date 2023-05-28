@@ -62,7 +62,6 @@ private:
   void emitBytes(uint8_t a, uint8_t b);
   void emitConstant(Value);
   void emitReturn();
-  void writeChunk(Chunk &chunk, uint8_t byte, int line);
   uint8_t makeConstant(Value value);
 
   ParseRule &getRule(TokenType);

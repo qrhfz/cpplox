@@ -13,7 +13,7 @@ namespace lox {
 
 bool Parser::compile(std::string const &src, Chunk &chunk) {
   scanner = std::make_unique<Scanner>(Scanner{src});
-  *compilingChunk = chunk;
+  compilingChunk = &chunk;
 
   advance();
   expression();
@@ -79,7 +79,7 @@ void Parser::errorAt(Token const &token, std::string message) {
 }
 
 void Parser::emitByte(uint8_t byte) {
-  writeChunk(currentChunk(), byte, previous.line);
+  currentChunk().write(byte, previous.line);
 }
 
 void Parser::emitBytes(uint8_t a, uint8_t b) {
@@ -89,7 +89,7 @@ void Parser::emitBytes(uint8_t a, uint8_t b) {
 
 Chunk &Parser::currentChunk() { return *compilingChunk; }
 
-void Parser::writeChunk(Chunk &chunk, uint8_t byte, int line) {}
+// void Parser::writeChunk(Chunk &chunk, uint8_t byte, int line) {}
 
 void Parser::expression() { parsePrecedence(Precedence::PREC_ASSIGNMENT); }
 void Parser::number() {

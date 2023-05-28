@@ -2,10 +2,6 @@
 
 namespace lox {
 
-Chunk::Chunk() {}
-
-Chunk::~Chunk() {}
-
 // void Chunk::write(uint8_t byte, size_t line) { this->codes.push_back(byte); }
 
 void Chunk::write(uint8_t byte, size_t line) {

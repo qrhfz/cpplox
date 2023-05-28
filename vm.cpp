@@ -41,7 +41,8 @@ InterpretResult VM::run() {
     }
     std::printf("\n");
 
-    size_t offset = this->ip - this->chunk.codes.data();
+    auto start = this->chunk.codes.data();
+    size_t offset = this->ip - start;
 
     disassembleInstruction(this->chunk, offset);
 
