@@ -7,9 +7,15 @@
 #include "value.h"
 #include <deque>
 #include <stack>
+#include <stdexcept>
 #include <string>
+#include <variant>
 
 namespace lox {
+
+inline bool isNumber(Value value) {
+  return std::get_if<double>(&value) != nullptr;
+}
 
 enum InterpretResult {
   INTERPRET_OK,
@@ -27,12 +33,19 @@ private:
   inline uint8_t readByte();
   inline Value readConstant();
   void resetStack();
+  void runtimeError(std::string message);
 
   template <typename Op> void binaryOp() {
-    auto b = this->pop();
-    auto a = this->pop();
-    this->push(Op()(a, b));
+    if (!isNumber(peek(0)) || !isNumber(peek(1))) {
+      throw std::runtime_error("Operand must be a number.");
+    }
+
+    auto b = std::get<double>(this->pop());
+    auto a = std::get<double>(this->pop());
+    push(Op()(a, b));
   }
+
+  Value peek(int distance);
 
 public:
   InterpretResult interpret(std::string const &src);

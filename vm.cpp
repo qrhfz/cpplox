@@ -13,7 +13,10 @@
 #include <iostream>
 #include <memory>
 #include <stack>
+#include <stdexcept>
+#include <tuple>
 #include <valarray>
+#include <variant>
 
 namespace lox {
 InterpretResult VM::interpret(std::string const &src) {
@@ -47,33 +50,46 @@ InterpretResult VM::run() {
     disassembleInstruction(this->chunk, offset);
 
 #endif
-    uint8_t instruction;
-    switch (instruction = *this->ip++) {
 
-    case OP_CONSTANT: {
-      Value constant = readConstant();
-      this->push(constant);
-      break;
-    }
-    case OP_ADD:
-      this->binaryOp<std::plus<Value>>();
-      break;
-    case OP_SUBTRACT:
-      this->binaryOp<std::minus<Value>>();
-      break;
-    case OP_MULTIPLY:
-      this->binaryOp<std::multiplies<Value>>();
-      break;
-    case OP_DIVIDE:
-      this->binaryOp<std::divides<Value>>();
-      break;
-    case OP_NEGATE:
-      this->stack.back() = -this->stack.back();
-      break;
-    case OP_RETURN:
-      printValue(this->pop());
-      std::cout << "\n";
-      return INTERPRET_OK;
+    uint8_t instruction;
+    try {
+      switch (instruction = *this->ip++) {
+
+      case OP_CONSTANT: {
+        Value constant = readConstant();
+        this->push(constant);
+        break;
+      }
+      case OP_ADD:
+        this->binaryOp<std::plus<double>>();
+        break;
+      case OP_SUBTRACT:
+        this->binaryOp<std::minus<double>>();
+        break;
+      case OP_MULTIPLY:
+        this->binaryOp<std::multiplies<double>>();
+        break;
+      case OP_DIVIDE:
+        this->binaryOp<std::divides<double>>();
+        break;
+      case OP_NEGATE: {
+        if (double const *value = std::get_if<double>(&this->stack.back())) {
+          this->stack.back() = -*value;
+        } else {
+          runtimeError("Operand must be a number.");
+          return INTERPRET_RUNTIME_ERROR;
+        }
+        break;
+      }
+      case OP_RETURN:
+        printValue(this->pop());
+        std::cout << "\n";
+        return INTERPRET_OK;
+      }
+
+    } catch (std::runtime_error e) {
+      runtimeError(e.what());
+      return INTERPRET_RUNTIME_ERROR;
     }
   }
 }
@@ -91,5 +107,15 @@ Value VM::pop() {
 
 void VM::init() { resetStack(); }
 void VM::resetStack() { this->stack.clear(); }
+void VM::runtimeError(std::string message) {
+  std::cerr << message << "\n";
+
+  size_t instruction = ip - chunk.codes.data() - 1;
+  int line = chunk.lines[instruction];
+  std::cerr << "[line " << line << "] in script\n";
+  resetStack();
+}
+
+Value VM::peek(int distance) { return stack.at(stack.size() - 1 - distance); }
 
 } // namespace lox

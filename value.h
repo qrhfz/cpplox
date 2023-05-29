@@ -1,13 +1,16 @@
 #ifndef cpplox_value_h
 #define cpplox_value_h
 
+#include <variant>
 #include <vector>
 
 namespace lox {
-using Value = double;
+
+class LoxNil {};
+
+using Value = std::variant<double, bool, LoxNil>;
 using ValueArray = std::vector<Value>;
 
-void initValueArray(ValueArray &);
 void printValue(Value);
 } // namespace lox
 
