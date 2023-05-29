@@ -11,17 +11,17 @@ class Parser;
 using ParseFn = void (lox::Parser::*)();
 
 enum class Precedence {
-  PREC_NONE,
-  PREC_ASSIGNMENT, // =
-  PREC_OR,         // or
-  PREC_AND,        // and
-  PREC_EQUALITY,   // == !=
-  PREC_COMPARISON, // < > <= >=
-  PREC_TERM,       // + -
-  PREC_FACTOR,     // * /
-  PREC_UNARY,      // ! -
-  PREC_CALL,       // . ()
-  PREC_PRIMARY
+  none,
+  assignment, // =
+  OR,         // or
+  AND,        // and
+  equality,   // == !=
+  comparison, // < > <= >=
+  term,       // + -
+  factor,     // * /
+  unary,      // ! -
+  call,       // . ()
+  primary
 };
 
 struct ParseRule {
@@ -47,6 +47,7 @@ private:
   void grouping();
   void unary();
   void binary();
+  void literal();
   void parsePrecedence(Precedence precedence);
 
   void advance();
@@ -64,50 +65,7 @@ private:
   void emitReturn();
   uint8_t makeConstant(Value value);
 
-  ParseRule &getRule(TokenType);
-
-  ParseRule rules[40] = {
-      {&Parser::grouping, NULL, Precedence::PREC_NONE}, // left paren
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {&Parser::unary, &Parser::binary, Precedence::PREC_TERM},
-      {NULL, &Parser::binary, Precedence::PREC_TERM},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, &Parser::binary, Precedence::PREC_FACTOR},
-      {NULL, &Parser::binary, Precedence::PREC_FACTOR},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {&Parser::number, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-      {NULL, NULL, Precedence::PREC_NONE},
-  };
+  ParseRule getRule(TokenType);
 };
 
 } // namespace lox

@@ -91,7 +91,7 @@ Chunk &Parser::currentChunk() { return *compilingChunk; }
 
 // void Parser::writeChunk(Chunk &chunk, uint8_t byte, int line) {}
 
-void Parser::expression() { parsePrecedence(Precedence::PREC_ASSIGNMENT); }
+void Parser::expression() { parsePrecedence(Precedence::assignment); }
 void Parser::number() {
   double value = std::stod(previous.str);
   emitConstant(value);
@@ -120,7 +120,7 @@ void Parser::unary() {
   TokenType operatorType = previous.type;
 
   // compile the operand
-  parsePrecedence(Precedence::PREC_UNARY);
+  parsePrecedence(Precedence::unary);
 
   switch (operatorType) {
   case TOKEN_MINUS:
@@ -133,7 +133,7 @@ void Parser::unary() {
 
 void Parser::binary() {
   TokenType operatorType = previous.type;
-  ParseRule &rule = getRule(operatorType);
+  ParseRule rule = getRule(operatorType);
   parsePrecedence(nextEnum(rule.precedence));
 
   switch (operatorType) {
@@ -150,7 +150,104 @@ void Parser::binary() {
   }
 }
 
-ParseRule &Parser::getRule(TokenType type) { return rules[type]; }
+void Parser::literal() {
+  switch (previous.type) {
+  case TOKEN_FALSE:
+    emitByte(OP_FALSE);
+  case TOKEN_NIL:
+    emitByte(OP_NIL);
+  case TOKEN_TRUE:
+    emitByte(OP_TRUE);
+  default:
+    return;
+  }
+}
+
+ParseRule Parser::getRule(TokenType type) {
+  switch (type) {
+  case TOKEN_LEFT_PAREN:
+    return {&Parser::grouping, nullptr, Precedence::none};
+  case TOKEN_RIGHT_PAREN:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_LEFT_BRACE:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_RIGHT_BRACE:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_COMMA:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_DOT:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_MINUS:
+    return {&Parser::unary, &Parser::binary, Precedence::term};
+  case TOKEN_PLUS:
+    return {nullptr, &Parser::binary, Precedence::term};
+  case TOKEN_SEMICOLON:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_SLASH:
+    return {nullptr, &Parser::binary, Precedence::factor};
+  case TOKEN_STAR:
+    return {nullptr, &Parser::binary, Precedence::factor};
+  case TOKEN_BANG:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_BANG_EQUAL:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_EQUAL:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_EQUAL_EQUAL:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_GREATER:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_GREATER_EQUAL:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_LESS:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_LESS_EQUAL:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_IDENTIFIER:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_STRING:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_NUMBER:
+    return {&Parser::number, nullptr, Precedence::none};
+  case TOKEN_AND:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_CLASS:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_ELSE:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_FALSE:
+    return {&Parser::literal, nullptr, Precedence::none};
+  case TOKEN_FOR:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_FUN:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_IF:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_NIL:
+    return {&Parser::literal, nullptr, Precedence::none};
+  case TOKEN_OR:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_PRINT:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_RETURN:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_SUPER:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_THIS:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_TRUE:
+    return {&Parser::literal, nullptr, Precedence::none};
+  case TOKEN_VAR:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_WHILE:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_ERROR:
+    return {nullptr, nullptr, Precedence::none};
+  case TOKEN_EOF:
+    return {nullptr, nullptr, Precedence::none};
+    break;
+  }
+}
 
 void Parser::parsePrecedence(Precedence precedence) {
   advance();

@@ -60,6 +60,15 @@ InterpretResult VM::run() {
         this->push(constant);
         break;
       }
+      case OP_NIL:
+        push(LoxNil{});
+        break;
+      case OP_TRUE:
+        push(true);
+        break;
+      case OP_FALSE:
+        push(false);
+        break;
       case OP_ADD:
         this->binaryOp<std::plus<double>>();
         break;
