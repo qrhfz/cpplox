@@ -162,7 +162,7 @@ TokenType Scanner::checkKeyword(int offset, std::string const &rest,
 
 bool Scanner::isDigit(char c) { return c >= '0' && c <= '9'; }
 bool Scanner::isAlpha(char c) {
-  return (c >= 'a' && c <= 'b') || (c >= 'A' && c <= 'Z') || c == '_';
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
 Token Scanner::makeToken(TokenType type) {
