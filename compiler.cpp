@@ -123,6 +123,9 @@ void Parser::unary() {
   parsePrecedence(Precedence::unary);
 
   switch (operatorType) {
+  case TOKEN_BANG:
+    emitByte(OP_NOT);
+    break;
   case TOKEN_MINUS:
     emitByte(OP_NEGATE);
     break;
@@ -188,7 +191,7 @@ ParseRule Parser::getRule(TokenType type) {
   case TOKEN_STAR:
     return {nullptr, &Parser::binary, Precedence::factor};
   case TOKEN_BANG:
-    return {nullptr, nullptr, Precedence::none};
+    return {&Parser::unary, nullptr, Precedence::none};
   case TOKEN_BANG_EQUAL:
     return {nullptr, nullptr, Precedence::none};
   case TOKEN_EQUAL:

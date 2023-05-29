@@ -19,6 +19,8 @@
 #include <variant>
 
 namespace lox {
+bool isFalsey(Value value);
+
 InterpretResult VM::interpret(std::string const &src) {
   Parser parser{};
   Chunk chunk{};
@@ -81,6 +83,9 @@ InterpretResult VM::run() {
       case OP_DIVIDE:
         this->binaryOp<std::divides<double>>();
         break;
+      case OP_NOT:
+        push(isFalsey(pop()));
+        break;
       case OP_NEGATE: {
         if (double const *value = std::get_if<double>(&this->stack.back())) {
           this->stack.back() = -*value;
@@ -126,5 +131,14 @@ void VM::runtimeError(std::string message) {
 }
 
 Value VM::peek(int distance) { return stack.at(stack.size() - 1 - distance); }
+bool isFalsey(Value value) {
+  struct FalseyVisitor {
+    bool operator()(bool b) { return !b; }
+    bool operator()(double) { return false; }
+    bool operator()(LoxNil) { return true; }
+  };
+  static FalseyVisitor visitor{};
 
+  return std::visit(visitor, value);
+}
 } // namespace lox
