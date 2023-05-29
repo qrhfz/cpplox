@@ -19,7 +19,6 @@
 #include <variant>
 
 namespace lox {
-bool isFalsey(Value value);
 
 InterpretResult VM::interpret(std::string const &src) {
   Parser parser{};
@@ -70,6 +69,18 @@ InterpretResult VM::run() {
         break;
       case OP_FALSE:
         push(false);
+        break;
+      case OP_EQUAL: {
+        Value b = pop();
+        Value a = pop();
+        push(valuesEqual(a, b));
+        break;
+      }
+      case OP_GREATER:
+        this->binaryOp<std::greater<double>>();
+        break;
+      case OP_LESS:
+        this->binaryOp<std::less<double>>();
         break;
       case OP_ADD:
         this->binaryOp<std::plus<double>>();
@@ -140,5 +151,21 @@ bool isFalsey(Value value) {
   static FalseyVisitor visitor{};
 
   return std::visit(visitor, value);
+}
+
+bool valuesEqual(Value a, Value b) {
+  ValueType aType = getType(a);
+  if (aType != getType(b)) {
+    return false;
+  }
+
+  switch (aType) {
+  case ValueType::Bool:
+    return std::get<bool>(a) == std::get<bool>(b);
+  case ValueType::Nil:
+    return true;
+  case ValueType::Number:
+    return std::get<double>(a) == std::get<double>(b);
+  }
 }
 } // namespace lox

@@ -140,6 +140,24 @@ void Parser::binary() {
   parsePrecedence(nextEnum(rule.precedence));
 
   switch (operatorType) {
+  case TOKEN_BANG_EQUAL:
+    emitBytes(OP_EQUAL, OP_NOT);
+    break;
+  case TOKEN_EQUAL_EQUAL:
+    emitByte(OP_EQUAL);
+    break;
+  case TOKEN_GREATER:
+    emitByte(OP_GREATER);
+    break;
+  case TOKEN_GREATER_EQUAL:
+    emitBytes(OP_LESS, OP_NOT);
+    break;
+  case TOKEN_LESS:
+    emitByte(OP_LESS);
+    break;
+  case TOKEN_LESS_EQUAL:
+    emitBytes(OP_GREATER, OP_NOT);
+    break;
   case TOKEN_PLUS:
     emitByte(OP_ADD);
   case TOKEN_MINUS:
@@ -193,19 +211,19 @@ ParseRule Parser::getRule(TokenType type) {
   case TOKEN_BANG:
     return {&Parser::unary, nullptr, Precedence::none};
   case TOKEN_BANG_EQUAL:
-    return {nullptr, nullptr, Precedence::none};
+    return {nullptr, &Parser::binary, Precedence::equality};
   case TOKEN_EQUAL:
     return {nullptr, nullptr, Precedence::none};
   case TOKEN_EQUAL_EQUAL:
-    return {nullptr, nullptr, Precedence::none};
+    return {nullptr, &Parser::binary, Precedence::comparison};
   case TOKEN_GREATER:
-    return {nullptr, nullptr, Precedence::none};
+    return {nullptr, &Parser::binary, Precedence::comparison};
   case TOKEN_GREATER_EQUAL:
-    return {nullptr, nullptr, Precedence::none};
+    return {nullptr, &Parser::binary, Precedence::comparison};
   case TOKEN_LESS:
-    return {nullptr, nullptr, Precedence::none};
+    return {nullptr, &Parser::binary, Precedence::comparison};
   case TOKEN_LESS_EQUAL:
-    return {nullptr, nullptr, Precedence::none};
+    return {nullptr, &Parser::binary, Precedence::comparison};
   case TOKEN_IDENTIFIER:
     return {nullptr, nullptr, Precedence::none};
   case TOKEN_STRING:

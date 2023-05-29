@@ -54,6 +54,9 @@ public:
   Value pop();
 };
 
+bool isFalsey(Value value);
+bool valuesEqual(Value a, Value b);
+
 } // namespace lox
 
 #endif
