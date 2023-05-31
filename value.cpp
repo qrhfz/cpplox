@@ -1,4 +1,5 @@
 #include "value.h"
+#include "object.h"
 
 #include <iostream>
 #include <variant>

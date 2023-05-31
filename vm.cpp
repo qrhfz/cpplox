@@ -83,9 +83,21 @@ InterpretResult VM::run() {
       case OP_LESS:
         this->binaryOp<std::less<double>>();
         break;
-      case OP_ADD:
-        this->binaryOp<std::plus<double>>();
+      case OP_ADD: {
+        if (isString(peek(0)) && isString(peek(1))) {
+          concat();
+        } else if (isNumber(peek(0)) && isNumber(peek(1))) {
+          double b = asNumber(pop());
+          double a = asNumber(pop());
+
+          push(a + b);
+        } else {
+          runtimeError("Operands must be two numbers or two strings.");
+          return INTERPRET_RUNTIME_ERROR;
+        }
+
         break;
+      }
       case OP_SUBTRACT:
         this->binaryOp<std::minus<double>>();
         break;
@@ -119,6 +131,18 @@ InterpretResult VM::run() {
       return INTERPRET_RUNTIME_ERROR;
     }
   }
+}
+
+void VM::concat() {
+  auto b = asString(pop());
+  auto a = asString(pop());
+
+  std::string newStr = a->str + b->str;
+
+  auto strObj = std::make_unique<StringObject>(newStr);
+  auto ptr = addObject(std::move(strObj));
+
+  push(ptr);
 }
 
 uint8_t VM::readByte() { return *this->ip++; }

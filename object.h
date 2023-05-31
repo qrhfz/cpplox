@@ -1,9 +1,11 @@
 #ifndef cpplox_object_h
 #define cpplox_object_h
 
-#include "common.h"
+#include "value.h"
 #include <memory>
 #include <string>
+#include <variant>
+
 namespace lox {
 enum class ObjectType { String };
 
@@ -21,6 +23,19 @@ public:
     this->str = std::move(str);
   }
 };
+
+inline bool isObjectType(Value value, ObjectType type) {
+  return isObject(value) && std::get<Object *>(value)->type == type;
+}
+
+inline bool isString(Value value) {
+  return isObjectType(value, ObjectType::String);
+}
+
+inline StringObject *asString(Value value) {
+  return static_cast<StringObject *>(asObject(value));
+}
+
 } // namespace lox
 
 #endif

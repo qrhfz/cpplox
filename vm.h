@@ -16,10 +16,6 @@
 
 namespace lox {
 
-inline bool isNumber(Value &value) {
-  return std::get_if<double>(&value) != nullptr;
-}
-
 enum InterpretResult {
   INTERPRET_OK,
   INTERPRET_COMPILE_ERROR,
@@ -49,13 +45,15 @@ private:
     push(Op()(a, b));
   }
 
+  void concat();
+
   Value &peek(int distance);
+  void push(Value);
+  Value pop();
 
 public:
   InterpretResult interpret(std::string const &src);
   void init();
-  void push(Value);
-  Value pop();
   Object *addObject(UniqueObjectPtr ptr) {
     objects.push_back(std::move(ptr));
     return objects.back().get();
