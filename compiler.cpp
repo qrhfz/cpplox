@@ -4,6 +4,7 @@
 #include "debug.h"
 #include "scanner.h"
 #include "value.h"
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <memory>
@@ -98,11 +99,11 @@ void Parser::number() {
 }
 
 void Parser::emitConstant(Value value) {
-  emitBytes(OP_CONSTANT, makeConstant(value));
+  emitBytes(OP_CONSTANT, makeConstant(std::move(value)));
 }
 
 uint8_t Parser::makeConstant(Value value) {
-  int constant = currentChunk().addConstant(value);
+  int constant = currentChunk().addConstant(std::move(value));
   if (constant > UINT8_MAX) {
     error("Too many constants in one chunk.");
     return 0;

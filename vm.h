@@ -13,7 +13,7 @@
 
 namespace lox {
 
-inline bool isNumber(Value value) {
+inline bool isNumber(Value &value) {
   return std::get_if<double>(&value) != nullptr;
 }
 
@@ -30,8 +30,8 @@ private:
   std::deque<Value> stack;
 
   InterpretResult run();
-  inline uint8_t readByte();
-  inline Value readConstant();
+  uint8_t readByte();
+  Value &readConstant();
   void resetStack();
   void runtimeError(std::string message);
 
@@ -45,7 +45,7 @@ private:
     push(Op()(a, b));
   }
 
-  Value peek(int distance);
+  Value &peek(int distance);
 
 public:
   InterpretResult interpret(std::string const &src);

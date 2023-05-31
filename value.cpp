@@ -8,8 +8,9 @@ struct Printer {
   void operator()(double value) const { std::cout << value; }
   void operator()(bool value) const { std::cout << (value ? "true" : "false"); }
   void operator()(Nil) const { std::cout << "nil"; }
+  void operator()(ObjectPtr &) const { std::cout << "Object"; }
 };
 
-void printValue(Value value) { std::visit(Printer{}, value); }
+void printValue(Value &value) { std::visit(Printer{}, value); }
 
 } // namespace lox

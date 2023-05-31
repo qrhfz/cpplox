@@ -38,7 +38,7 @@ InterpretResult VM::run() {
   for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
     std::printf("          ");
-    for (auto slot : this->stack) {
+    for (auto &slot : this->stack) {
       std::printf("[ ");
       printValue(slot);
       std::printf(" ]");
@@ -57,8 +57,8 @@ InterpretResult VM::run() {
       switch (instruction = *this->ip++) {
 
       case OP_CONSTANT: {
-        Value constant = readConstant();
-        this->push(constant);
+        Value &constant = readConstant();
+        this->push(std::move(constant));
         break;
       }
       case OP_NIL:
@@ -73,7 +73,7 @@ InterpretResult VM::run() {
       case OP_EQUAL: {
         Value b = pop();
         Value a = pop();
-        push(valuesEqual(a, b));
+        push(valuesEqual(std::move(a), std::move(b)));
         break;
       }
       case OP_GREATER:
@@ -107,7 +107,8 @@ InterpretResult VM::run() {
         break;
       }
       case OP_RETURN:
-        printValue(this->pop());
+        Value v = this->pop();
+        printValue(v);
         std::cout << "\n";
         return INTERPRET_OK;
       }
@@ -119,13 +120,13 @@ InterpretResult VM::run() {
   }
 }
 
-inline uint8_t VM::readByte() { return *this->ip++; }
-inline Value VM::readConstant() { return this->chunk.constants.at(readByte()); }
+uint8_t VM::readByte() { return *this->ip++; }
+Value &VM::readConstant() { return this->chunk.constants.at(readByte()); }
 
-void VM::push(Value value) { this->stack.push_back(value); }
+void VM::push(Value value) { this->stack.push_back(std::move(value)); }
 
 Value VM::pop() {
-  Value top{this->stack.back()};
+  Value top = std::move(this->stack.back());
   this->stack.pop_back();
   return top;
 }
@@ -141,12 +142,14 @@ void VM::runtimeError(std::string message) {
   resetStack();
 }
 
-Value VM::peek(int distance) { return stack.at(stack.size() - 1 - distance); }
+Value &VM::peek(int distance) { return stack.at(stack.size() - 1 - distance); }
+
 bool isFalsey(Value value) {
   struct FalseyVisitor {
     bool operator()(bool b) { return !b; }
     bool operator()(double) { return false; }
     bool operator()(Nil) { return true; }
+    bool operator()(ObjectPtr &o) { return o != nullptr; }
   };
   static FalseyVisitor visitor{};
 
