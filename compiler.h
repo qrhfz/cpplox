@@ -3,6 +3,7 @@
 
 #include "chunk.h"
 #include "scanner.h"
+#include "vm.h"
 #include <memory>
 #include <string>
 #include <string_view>
@@ -32,18 +33,21 @@ struct ParseRule {
 
 class Parser {
 public:
+  Parser(VM &_vm) : vm(_vm) {}
   bool compile(std::string const &src, Chunk &chunk);
 
 private:
-  std::unique_ptr<Scanner> scanner;
+  VM &vm;
+  std::unique_ptr<Scanner> scanner = nullptr;
   Token current;
   Token previous;
   bool hadError = false;
   bool panicMode = false;
-  Chunk *compilingChunk;
+  Chunk *compilingChunk = nullptr;
 
   void expression();
   void number();
+  void string();
   void grouping();
   void unary();
   void binary();

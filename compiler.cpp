@@ -2,6 +2,7 @@
 #include "chunk.h"
 #include "common.h"
 #include "debug.h"
+#include "object.h"
 #include "scanner.h"
 #include "value.h"
 #include <algorithm>
@@ -96,6 +97,14 @@ void Parser::expression() { parsePrecedence(Precedence::assignment); }
 void Parser::number() {
   double value = std::stod(previous.str);
   emitConstant(value);
+}
+
+void Parser::string() {
+  auto str = previous.str.substr(1, previous.str.length() - 2);
+
+  auto ptr = vm.addObject(std::make_unique<StringObject>(str));
+
+  emitConstant(ptr);
 }
 
 void Parser::emitConstant(Value value) {
@@ -228,7 +237,7 @@ ParseRule Parser::getRule(TokenType type) {
   case TOKEN_IDENTIFIER:
     return {nullptr, nullptr, Precedence::none};
   case TOKEN_STRING:
-    return {nullptr, nullptr, Precedence::none};
+    return {&Parser::string, nullptr, Precedence::none};
   case TOKEN_NUMBER:
     return {&Parser::number, nullptr, Precedence::none};
   case TOKEN_AND:

@@ -21,7 +21,7 @@
 namespace lox {
 
 InterpretResult VM::interpret(std::string const &src) {
-  Parser parser{};
+  Parser parser{*this};
   Chunk chunk{};
 
   if (!parser.compile(src, chunk)) {
@@ -149,7 +149,7 @@ bool isFalsey(Value value) {
     bool operator()(bool b) { return !b; }
     bool operator()(double) { return false; }
     bool operator()(Nil) { return true; }
-    bool operator()(ObjectPtr &o) { return o != nullptr; }
+    bool operator()(Object *o) { return o != nullptr; }
   };
   static FalseyVisitor visitor{};
 
@@ -169,6 +169,9 @@ bool valuesEqual(Value a, Value b) {
     return true;
   case ValueType::Number:
     return std::get<double>(a) == std::get<double>(b);
+  case ValueType::Object:
+    return std::get<Object *>(a) == std::get<Object *>(b);
+    break;
   }
 }
 } // namespace lox

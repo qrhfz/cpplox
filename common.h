@@ -11,7 +11,6 @@ namespace lox {
 template <typename T> T nextEnum(T enumMember) {
   return static_cast<T>(static_cast<int>(enumMember) + 1);
 }
-
 } // namespace lox
 
 #endif

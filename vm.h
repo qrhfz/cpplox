@@ -1,15 +1,18 @@
 #ifndef cpplox_vm_h
 #define cpplox_vm_h
 
+#include <algorithm>
 #include <memory>
 
 #include "chunk.h"
+#include "object.h"
 #include "value.h"
 #include <deque>
 #include <stack>
 #include <stdexcept>
 #include <string>
 #include <variant>
+#include <vector>
 
 namespace lox {
 
@@ -28,6 +31,7 @@ private:
   Chunk chunk;
   uint8_t *ip;
   std::deque<Value> stack;
+  std::vector<UniqueObjectPtr> objects;
 
   InterpretResult run();
   uint8_t readByte();
@@ -52,6 +56,10 @@ public:
   void init();
   void push(Value);
   Value pop();
+  Object *addObject(UniqueObjectPtr ptr) {
+    objects.push_back(std::move(ptr));
+    return objects.back().get();
+  }
 };
 
 bool isFalsey(Value value);
