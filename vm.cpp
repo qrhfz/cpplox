@@ -62,7 +62,7 @@ InterpretResult VM::run() {
         break;
       }
       case OP_NIL:
-        push(LoxNil{});
+        push(Nil{});
         break;
       case OP_TRUE:
         push(true);
@@ -146,7 +146,7 @@ bool isFalsey(Value value) {
   struct FalseyVisitor {
     bool operator()(bool b) { return !b; }
     bool operator()(double) { return false; }
-    bool operator()(LoxNil) { return true; }
+    bool operator()(Nil) { return true; }
   };
   static FalseyVisitor visitor{};
 

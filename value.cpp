@@ -4,18 +4,12 @@
 #include <variant>
 
 namespace lox {
-void printValue(Value value) {
-  struct Printer {
-    void operator()(double value) const { std::cout << value; }
-    void operator()(bool value) const {
-      std::cout << (value ? "true" : "false");
-    }
-    void operator()(LoxNil) const { std::cout << "nil"; }
-  };
+struct Printer {
+  void operator()(double value) const { std::cout << value; }
+  void operator()(bool value) const { std::cout << (value ? "true" : "false"); }
+  void operator()(Nil) const { std::cout << "nil"; }
+};
 
-  static const Printer printer{};
-
-  std::visit(printer, value);
-}
+void printValue(Value value) { std::visit(Printer{}, value); }
 
 } // namespace lox

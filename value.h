@@ -5,8 +5,8 @@
 #include <vector>
 
 namespace lox {
-
-class LoxNil {};
+class Object;
+class Nil {};
 
 enum class ValueType {
   Bool,
@@ -14,17 +14,17 @@ enum class ValueType {
   Number,
 };
 
-using Value = std::variant<double, bool, LoxNil>;
+using Value = std::variant<double, bool, Nil>;
 using ValueArray = std::vector<Value>;
 
+struct TypeVisitor {
+  ValueType operator()(double) { return ValueType::Number; }
+  ValueType operator()(bool) { return ValueType::Bool; }
+  ValueType operator()(Nil) { return ValueType::Nil; }
+};
+
 inline ValueType getType(Value value) {
-  struct TypeVisitor {
-    ValueType operator()(double) { return ValueType::Number; }
-    ValueType operator()(bool) { return ValueType::Bool; }
-    ValueType operator()(LoxNil) { return ValueType::Nil; }
-  };
-  static TypeVisitor visitor{};
-  return std::visit(visitor, value);
+  return std::visit(TypeVisitor{}, value);
 }
 
 void printValue(Value);
