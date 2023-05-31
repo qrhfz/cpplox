@@ -2,6 +2,7 @@
 #include "chunk.h"
 #include "compiler.h"
 #include "debug.h"
+#include "object.h"
 #include "value.h"
 #include <algorithm>
 #include <cstddef>
@@ -170,7 +171,19 @@ bool valuesEqual(Value a, Value b) {
   case ValueType::Number:
     return std::get<double>(a) == std::get<double>(b);
   case ValueType::Object:
-    return std::get<Object *>(a) == std::get<Object *>(b);
+    auto objA = std::get<Object *>(a);
+    auto objB = std::get<Object *>(b);
+
+    if (objA->type != objB->type) {
+      return false;
+    }
+
+    if (objA->type == ObjectType::String) {
+      return static_cast<StringObject *>(objA)->str ==
+             static_cast<StringObject *>(objB)->str;
+    }
+
+    return objA == objB;
     break;
   }
 }
