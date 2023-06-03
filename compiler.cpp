@@ -52,10 +52,43 @@ void Parser::synchronize() {
 }
 
 void Parser::declaration() {
-  statement();
+  if (match(TOKEN_VAR)) {
+    varDeclaration();
+  } else {
+    statement();
+  }
+
   if (panicMode) {
     synchronize();
   }
+}
+
+void Parser::varDeclaration() {
+  uint8_t global = parseVariable("Expect variable name.");
+
+  if (match(TOKEN_EQUAL)) {
+    expression();
+  } else {
+    emitByte(OP_NIL);
+  }
+
+  consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
+
+  defineVariable(global);
+}
+
+uint8_t Parser::parseVariable(std::string errorMessage) {
+  consume(TOKEN_IDENTIFIER, errorMessage);
+  return identifierConstant(previous);
+}
+
+uint8_t Parser::identifierConstant(Token &name) {
+
+  return makeConstant(addString(name.str));
+}
+
+void Parser::defineVariable(uint8_t global) {
+  emitBytes(OP_DEFINE_GLOBAL, global);
 }
 
 void Parser::statement() {
@@ -166,9 +199,13 @@ void Parser::number() {
 void Parser::string() {
   auto str = previous.str.substr(1, previous.str.length() - 2);
 
-  auto ptr = vm.addObject(std::make_unique<StringObject>(str));
+  auto ptr = addString(str);
 
   emitConstant(ptr);
+}
+
+Object *Parser::addString(std::string str) {
+  return vm.addObject(std::make_unique<StringObject>(str));
 }
 
 void Parser::emitConstant(Value value) {

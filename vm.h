@@ -11,6 +11,7 @@
 #include <stack>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <variant>
 #include <vector>
 
@@ -28,6 +29,7 @@ private:
   uint8_t *ip;
   std::deque<Value> stack;
   std::vector<UniqueObjectPtr> objects;
+  std::unordered_map<StringObject *, Value> globals;
 
   InterpretResult run();
   uint8_t readByte();

@@ -4,6 +4,7 @@
 #include "chunk.h"
 #include "scanner.h"
 #include "vm.h"
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -48,6 +49,12 @@ private:
   void synchronize();
 
   void declaration();
+
+  void varDeclaration();
+  uint8_t parseVariable(std::string);
+  uint8_t identifierConstant(Token &);
+  void defineVariable(uint8_t global);
+
   void statement();
   void printStatement();
   void expressionStatement();
@@ -77,7 +84,7 @@ private:
   void emitConstant(Value);
   void emitReturn();
   uint8_t makeConstant(Value value);
-
+  Object *addString(std::string);
   ParseRule getRule(TokenType);
 };
 

@@ -74,6 +74,12 @@ InterpretResult VM::run() {
       case OP_POP:
         pop();
         break;
+      case OP_DEFINE_GLOBAL: {
+        auto name = asString(readConstant());
+        globals.insert_or_assign(name, peek(0));
+        pop();
+        break;
+      }
       case OP_EQUAL: {
         Value b = pop();
         Value a = pop();
