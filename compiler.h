@@ -48,6 +48,7 @@ private:
   void declaration();
   void statement();
   void printStatement();
+  void expressionStatement();
 
   void expression();
   void number();

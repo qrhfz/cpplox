@@ -71,6 +71,9 @@ InterpretResult VM::run() {
       case OP_FALSE:
         push(false);
         break;
+      case OP_POP:
+        pop();
+        break;
       case OP_EQUAL: {
         Value b = pop();
         Value a = pop();

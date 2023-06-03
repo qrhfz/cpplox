@@ -31,7 +31,15 @@ void Parser::declaration() { statement(); }
 void Parser::statement() {
   if (match(TOKEN_PRINT)) {
     printStatement();
+  } else {
+    expressionStatement();
   }
+}
+
+void Parser::expressionStatement() {
+  expression();
+  consume(TOKEN_SEMICOLON, "Expect ';' after value.");
+  emitByte(OP_POP);
 }
 
 void Parser::printStatement() {
