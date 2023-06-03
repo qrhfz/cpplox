@@ -28,7 +28,7 @@ inline ValueType getType(Value &value) {
   return std::visit(TypeVisitor{}, value);
 }
 
-void printValue(Value &);
+void printValue(Value);
 
 inline double asNumber(Value value) {
   return std::get<double>(value); //

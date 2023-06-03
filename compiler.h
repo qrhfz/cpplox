@@ -45,6 +45,10 @@ private:
   bool panicMode = false;
   Chunk *compilingChunk = nullptr;
 
+  void declaration();
+  void statement();
+  void printStatement();
+
   void expression();
   void number();
   void string();
@@ -57,6 +61,8 @@ private:
   void advance();
   void consume(TokenType, std::string const &message);
   void endCompiler();
+  bool match(TokenType);
+  bool check(TokenType);
 
   void errorAtCurrent(std::string message);
   void error(std::string message);

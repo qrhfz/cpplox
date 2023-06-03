@@ -18,11 +18,26 @@ bool Parser::compile(std::string const &src, Chunk &chunk) {
   compilingChunk = &chunk;
 
   advance();
-  expression();
-  consume(TOKEN_EOF, "Expect end of expression.");
+  while (!match(TOKEN_EOF)) {
+    declaration();
+  }
   endCompiler();
 
   return !hadError;
+}
+
+void Parser::declaration() { statement(); }
+
+void Parser::statement() {
+  if (match(TOKEN_PRINT)) {
+    printStatement();
+  }
+}
+
+void Parser::printStatement() {
+  expression();
+  consume(TOKEN_SEMICOLON, "Expect ';' after value.");
+  emitByte(OP_PRINT);
 }
 
 void Parser::endCompiler() { emitReturn(); }
@@ -56,6 +71,17 @@ void Parser::consume(TokenType type, std::string const &message) {
 
   errorAtCurrent(message);
 }
+
+bool Parser::match(TokenType type) {
+  if (!check(type)) {
+    return false;
+  }
+
+  advance();
+  return true;
+}
+
+bool Parser::check(TokenType type) { return current.type == type; }
 
 void Parser::errorAtCurrent(std::string message) { errorAt(current, message); }
 

@@ -119,10 +119,11 @@ InterpretResult VM::run() {
         }
         break;
       }
+      case OP_PRINT:
+        printValue(pop());
+        printf("\n");
+        break;
       case OP_RETURN:
-        Value v = this->pop();
-        printValue(v);
-        std::cout << "\n";
         return INTERPRET_OK;
       }
 

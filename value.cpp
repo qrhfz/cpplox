@@ -19,6 +19,6 @@ struct Printer {
   }
 };
 
-void printValue(Value &value) { std::visit(Printer{}, value); }
+void printValue(Value value) { std::visit(Printer{}, value); }
 
 } // namespace lox
