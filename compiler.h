@@ -45,6 +45,8 @@ private:
   bool panicMode = false;
   Chunk *compilingChunk = nullptr;
 
+  void synchronize();
+
   void declaration();
   void statement();
   void printStatement();

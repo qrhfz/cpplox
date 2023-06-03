@@ -26,7 +26,37 @@ bool Parser::compile(std::string const &src, Chunk &chunk) {
   return !hadError;
 }
 
-void Parser::declaration() { statement(); }
+void Parser::synchronize() {
+  panicMode = false;
+  while (current.type != TOKEN_EOF) {
+    if (previous.type == TOKEN_SEMICOLON) {
+      return;
+    }
+
+    switch (current.type) {
+    case TOKEN_CLASS:
+    case TOKEN_FUN:
+    case TOKEN_VAR:
+    case TOKEN_FOR:
+    case TOKEN_IF:
+    case TOKEN_WHILE:
+    case TOKEN_PRINT:
+    case TOKEN_RETURN:
+      return;
+    default:
+      break;
+    }
+
+    advance();
+  }
+}
+
+void Parser::declaration() {
+  statement();
+  if (panicMode) {
+    synchronize();
+  }
+}
 
 void Parser::statement() {
   if (match(TOKEN_PRINT)) {
