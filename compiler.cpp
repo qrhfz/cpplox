@@ -205,7 +205,7 @@ void Parser::string() {
 }
 
 Object *Parser::addString(std::string str) {
-  return vm.addObject(std::make_unique<StringObject>(str));
+  return vm.addObject(std::make_unique<StringObject>(std::move(str)));
 }
 
 void Parser::emitConstant(Value value) {

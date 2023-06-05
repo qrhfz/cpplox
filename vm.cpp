@@ -149,7 +149,7 @@ void VM::concat() {
 
   std::string newStr = a->str + b->str;
 
-  auto strObj = std::make_unique<StringObject>(newStr);
+  auto strObj = std::make_unique<StringObject>(std::move(newStr));
   auto ptr = addObject(std::move(strObj));
 
   push(ptr);
