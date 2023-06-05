@@ -209,11 +209,11 @@ Object *Parser::addString(std::string str) {
 }
 
 void Parser::emitConstant(Value value) {
-  emitBytes(OP_CONSTANT, makeConstant(std::move(value)));
+  emitBytes(OP_CONSTANT, makeConstant(value));
 }
 
 uint8_t Parser::makeConstant(Value value) {
-  int constant = currentChunk().addConstant(std::move(value));
+  int constant = currentChunk().addConstant(value);
   if (constant > UINT8_MAX) {
     error("Too many constants in one chunk.");
     return 0;

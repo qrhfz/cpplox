@@ -33,7 +33,7 @@ private:
 
   InterpretResult run();
   uint8_t readByte();
-  Value &readConstant();
+  Value readConstant();
   void resetStack();
   void runtimeError(std::string message);
 

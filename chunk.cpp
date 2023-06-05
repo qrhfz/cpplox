@@ -34,7 +34,7 @@ size_t Chunk::getLine(size_t instructionIdx) {
 }
 
 uint64_t Chunk::addConstant(Value value) {
-  this->constants.push_back(std::move(value));
+  this->constants.push_back(value);
 
   return this->constants.size() - 1;
 }

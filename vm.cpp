@@ -58,8 +58,8 @@ InterpretResult VM::run() {
       switch (instruction = *this->ip++) {
 
       case OP_CONSTANT: {
-        Value &constant = readConstant();
-        this->push(std::move(constant));
+        Value constant = readConstant();
+        this->push(constant);
         break;
       }
       case OP_NIL:
@@ -83,7 +83,7 @@ InterpretResult VM::run() {
       case OP_EQUAL: {
         Value b = pop();
         Value a = pop();
-        push(valuesEqual(std::move(a), std::move(b)));
+        push(valuesEqual(a, b));
         break;
       }
       case OP_GREATER:
@@ -156,12 +156,12 @@ void VM::concat() {
 }
 
 uint8_t VM::readByte() { return *this->ip++; }
-Value &VM::readConstant() { return this->chunk.constants.at(readByte()); }
+Value VM::readConstant() { return this->chunk.constants.at(readByte()); }
 
-void VM::push(Value value) { this->stack.push_back(std::move(value)); }
+void VM::push(Value value) { this->stack.push_back(value); }
 
 Value VM::pop() {
-  Value top = std::move(this->stack.back());
+  Value top = this->stack.back();
   this->stack.pop_back();
   return top;
 }
